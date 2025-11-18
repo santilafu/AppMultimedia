@@ -1,28 +1,26 @@
 package com.example.appmultimedia
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-//Navegamos a traves de pantallas
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.appmultimedia.ui.theme.AppMultimediaTheme
-
+import com.example.appmultimedia.ui.theme.AudioScreen
+import com.example.appmultimedia.ui.theme.ImageScreen
+import com.example.appmultimedia.ui.theme.VideoScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,145 +34,77 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-// Creamos la navegacion a las pantallas
 @Composable
-fun AppMultimediaApp(){
-//Aqui creamos el controlador de navegacion
+fun AppMultimediaApp() {
+    // Controlador de navegación
     val navController = rememberNavController()
-//Aqui creamos el host de navegacion,  que define las rutas de navegacion
+
+    // Definimos las pantallas de la app
     NavHost(
-        navController = navController,           //Definimos el controlador de navegacion
-        startDestination = "menu"                //Definimos la pantalla inicial
-    ){
-        composable("menu"){
-            AppMultimediaMainScreen(navController)           //LLamamos a la funcion de AppMultimediaMainScreen
+        navController = navController,
+        startDestination = "menu"
+    ) {
+        composable("menu") {
+            MainMenuScreen(navController)
         }
-        composable("audio"){             //Definimos la pantalla audio
-            PantallaAudio()                     //Llamamos a la funcion de PantallaAudio
+        composable("audio") {
+            AudioScreen(navController)
         }
-        composable("imagen"){           //Definimos la pantalla imagen
-            PantallaImagen()                    //Llamamos a la funcion de PantallaImagen
+        composable("imagen") {
+            ImageScreen(navController)
         }
-        composable("video"){            //Definimos la pantalla video
-            PantallaVideo()                     //Llamamos a la funcion de PantallaVideo
+        composable("video") {
+            VideoScreen(navController)
         }
+        // Más adelante podríamos usar:
+        // composable("animacion") { AnimationScreen(navController) }
     }
 }
 
-//Creamos la funcion de AppMultimedia
-@Composable //Funcion de AppMultimediaScreen funcion "menu" recibe navHostController para navegar a las pantallas
-fun AppMultimediaMainScreen(navHostController: NavHostController) {
-    // Esta pantalla sera la principal
-    // Contiene el menu principal de la app
+@Composable
+fun MainMenuScreen(navController: NavHostController) {
     Scaffold { innerPadding ->
-        // Contenido de la pantalla
-        Column (
+        Column(
             modifier = Modifier
-                .fillMaxSize()                                  // Llena la pantalla
-                .padding(innerPadding)           // Agrega relleno para que no se vea la barra de navegacion
-                .padding(24.dp),                           // Agrega relleno para que no se vea el texto
-            verticalArrangement = Arrangement.Top,              // Centra verticalmente el contenido en la pantalla
-            horizontalAlignment = Alignment.CenterHorizontally, // Centra horizontalmente el contenido
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        ){
-            //Titulo de la pantalla
             Text(
-            text = "App Multimedia",                            // Muestra el texto
-            style = MaterialTheme.typography.headlineMedium,    // Estilo de texto
-            modifier = Modifier.padding(bottom = 32.dp)         // Agrega relleno para que no se vea el texto
+                text = "App Multimedia",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 32.dp)
             )
-            //Boton Audio
+
             Button(
-                onClick = { navHostController.navigate("audio") },       // Acción al hacer click en el boton de audio navega a la pantalla de audio
-                modifier = Modifier                                             // Modificador para el boton de audio de la app multimedia
-                    .fillMaxWidth()                                             // Llena el ancho del padre (la pantalla) con el boton
-                    .padding(vertical = 8.dp)                                   // Agrega relleno vertical para que no se vea el texto
-            ){
-                Text(text = "Reproducir Audio")
-            }
-            //Boton Imagen
-            Button(
-                onClick = { navHostController.navigate("imagen") },     // Accion al hacer click en el boton de imagen navega a la pantalla de imagen
+                onClick = { navController.navigate("audio") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-            ){
-                Text(text = "Ver Imagen")
+            ) {
+                Text("Reproducir audio")
             }
-            // Boton Video
+
             Button(
-                onClick = { navHostController.navigate("video") },       // Acción al hacer click en el boton de video navega a la pantalla de video
+                onClick = { navController.navigate("imagen") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-            ){
-                Text(text = "Ver Video")
+            ) {
+                Text("Ver imagen")
+            }
+
+            Button(
+                onClick = { navController.navigate("video") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text("Ver vídeo")
             }
         }
     }
 }
-// Creamos la pantalla de Audio
-@Composable
-fun PantallaAudio() {
-    // Esta sera la pantalla de audio
-    // Contiene el reproductor de audio
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-        Text(
-            text = "Reproducir Audio",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-        Text("Aqui ira el reproductor de audio")
-    }
-}
-
-//Creamos la pantalla imagen
-@Composable
-fun PantallaImagen() {
-    // Esta sera la pantalla de imagen
-    // Contiene la imagen
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Ver Imagen",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-        Text("Aqui ira la imagen")
-    }
-}
-
-//Creamos la pantalla video
-@Composable
-fun PantallaVideo() {
-    // Esta sera la pantalla de video
-    // Contiene el reproductor de video
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Reproductor Video",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-        Text("Aqui ira el reproductor de video")
-    }
-}
-
