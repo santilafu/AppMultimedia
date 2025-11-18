@@ -13,58 +13,55 @@ import com.example.appmultimedia.R
 @Composable
 fun AudioScreen(navController: NavHostController) {
 
-    // MediaPlayer se declara como estado para poder recrearlo
-    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+    // Estado para saber si el audio se está reproduciendo
+    var isPlaying by remember { mutableStateOf(false) }
+
+    // Carga del audio desde res/raw
+    val mediaPlayer = remember {
+        MediaPlayer.create(navController.context, R.raw.introentera)
+    }
+
+    // Limpieza del reproductor cuando salimos de la pantalla
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer.release()
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
 
         Text(
             text = "Reproductor de Audio",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // BOTÓN REPRODUCIR
         Button(
             onClick = {
-                // Si ya hay un reproductor, lo paramos y lo borramos
-                mediaPlayer?.release()
-
-                // Creamos uno nuevo
-                mediaPlayer = MediaPlayer.create(navController.context, R.raw.introentera)
-
-                // Lo arrancamos
-                mediaPlayer?.start()
+                // Reproducimos o pausamos según el estado
+                if (!isPlaying) {
+                    mediaPlayer.start()
+                } else {
+                    mediaPlayer.pause()
+                }
+                isPlaying = !isPlaying
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            Text("Reproducir audio")
+            Text(if (isPlaying) "Pausar" else "Reproducir")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // BOTÓN PARAR
         Button(
-            onClick = {
-                mediaPlayer?.stop()
-                mediaPlayer?.release()
-                mediaPlayer = null
-            },
-            modifier = Modifier.fillMaxWidth()
+            onClick = { navController.popBackStack() },
+            modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text("Detener audio")
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(onClick = { navController.popBackStack() }) {
-            Text("Volver al menú")
+            Text("Volver")
         }
     }
 }
